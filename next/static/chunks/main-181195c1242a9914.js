@@ -3323,7 +3323,7 @@
       }
       function resolveDynamicRoute(r, n) {
         let o = (0, s.removeTrailingSlash)((0, g.denormalizePagePath)(r));
-        return "/404" === o || "/error" === o
+        return "/404" === o || "/_error" === o
           ? r
           : (n.includes(o) ||
               n.some((n) => {
@@ -3353,7 +3353,7 @@
                 (!h ||
                   f ||
                   h.includes("__next_data_catchall") ||
-                  h.includes("/error") ||
+                  h.includes("/_error") ||
                   h.includes("/404") ||
                   (f = h),
                 f)
@@ -3776,7 +3776,7 @@
           if (
             (V && ec && (X = !1),
             X &&
-              "/error" !== ea &&
+              "/_error" !== ea &&
               ((l._shouldResolveHref = !0),
               (en.pathname = resolveDynamicRoute(ea, z)),
               en.pathname === ea ||
@@ -3828,7 +3828,7 @@
             }
           }
           V || Router.events.emit("routeChangeStart", o, ee);
-          let ef = "/404" === this.pathname || "/error" === this.pathname;
+          let ef = "/404" === this.pathname || "/_error" === this.pathname;
           try {
             let s = await this.getRouteInfo({
               route: el,
@@ -3926,7 +3926,7 @@
                 try {
                   await this.fetchComponent("/404"), (r = "/404");
                 } catch (n) {
-                  r = "/error";
+                  r = "/_error";
                 }
                 if (
                   ((s = await this.getRouteInfo({
@@ -3946,7 +3946,7 @@
               }
             }
             V &&
-              "/error" === this.pathname &&
+              "/_error" === this.pathname &&
               (null == (y = self.__NEXT_DATA__.props)
                 ? void 0
                 : null == (_ = y.pageProps)
@@ -3981,7 +3981,7 @@
                 "type" in s)
               )
                 throw Error("Unexpected middleware effect on " + this.pathname);
-              "/error" === this.pathname &&
+              "/_error" === this.pathname &&
                 (null == (U = self.__NEXT_DATA__.props)
                   ? void 0
                   : null == (D = U.pageProps)
@@ -4054,7 +4054,7 @@
           try {
             let l;
             let { page: u, styleSheets: s } = await this.fetchComponent(
-                "/error"
+                "/_error"
               ),
               d = { props: l, Component: u, styleSheets: s, err: r, error: r };
             if (!d.props)
@@ -4133,7 +4133,7 @@
                       throw r;
                     });
             if (
-              (L && ("/error" === o || "/404" === o) && (L.effect = void 0),
+              (L && ("/_error" === o || "/404" === o) && (L.effect = void 0),
               E &&
                 (L
                   ? (L.json = self.__NEXT_DATA__.props)
@@ -4533,7 +4533,7 @@
             });
           let I = (0, s.removeTrailingSlash)(r);
           (this.components = {}),
-            "/error" !== r &&
+            "/_error" !== r &&
               (this.components[I] = {
                 Component: g,
                 initial: !0,
