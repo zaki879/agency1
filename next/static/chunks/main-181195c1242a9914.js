@@ -466,7 +466,7 @@
           (E = u.defaultLocale);
         let n = u.assetPrefix || "";
         if (
-          (self.__next_set_public_path__("" + n + "https://zaki879.github.io"),
+          (self.__next_set_public_path__("" + n + "https://zaki879.github.io/agency1/next/"),
           (0, N.setConfig)({
             serverRuntimeConfig: {},
             publicRuntimeConfig: u.runtimeConfig || {},
@@ -558,7 +558,63 @@
         let o = { ...n, Component: b, err: u.err, router: l };
         return w.default.createElement(AppContainer, null, renderApp(r, o));
       };
-
+      function renderError(r) {
+        let { App: n, err: f } = r;
+        return (
+          console.error(f),
+          console.error(
+            "A client-side exception has occurred, see here for more info: https://nextjs.org/docs/messages/client-side-exception-occurred"
+          ),
+          d
+            .loadPage("/error")
+            .then((l) => {
+              let { page: u, styleSheets: s } = l;
+              return (null == g ? void 0 : g.Component) === u
+                ? Promise.resolve()
+                    .then(() => S._(o(66908)))
+                    .then((l) =>
+                      Promise.resolve()
+                        .then(() => S._(o(21337)))
+                        .then((o) => ((n = o.default), (r.App = n), l))
+                    )
+                    .then((r) => ({
+                      ErrorComponent: r.default,
+                      styleSheets: [],
+                    }))
+                : { ErrorComponent: u, styleSheets: s };
+            })
+            .then((o) => {
+              var d;
+              let { ErrorComponent: h, styleSheets: g } = o,
+                _ = wrapApp(n),
+                y = {
+                  Component: h,
+                  AppTree: _,
+                  router: l,
+                  ctx: {
+                    err: f,
+                    pathname: u.page,
+                    query: u.query,
+                    asPath: s,
+                    AppTree: _,
+                  },
+                };
+              return Promise.resolve(
+                (null == (d = r.props) ? void 0 : d.err)
+                  ? r.props
+                  : (0, L.loadGetInitialProps)(n, y)
+              ).then((n) =>
+                doRender({
+                  ...r,
+                  err: f,
+                  Component: h,
+                  styleSheets: g,
+                  props: n,
+                })
+              );
+            })
+        );
+      }
       function Head(r) {
         let { callback: n } = r;
         return w.default.useLayoutEffect(() => n(), [n]), null;
@@ -748,7 +804,9 @@
         try {
           await doRender(r);
         } catch (o) {
-          
+          let n = (0, W.getProperError)(o);
+          if (n.cancelled) throw n;
+          await renderError({ ...r, err: n });
         }
       }
       async function hydrate(r) {
@@ -1356,8 +1414,119 @@
             );
         });
       }
+     function getClientBuildManifest() {
+  if (self.__BUILD_MANIFEST) {
+    // Print and process the manifest if it's already available
+    console.log('Original Manifest Object:', self.__BUILD_MANIFEST);
+    const filteredManifest = filterManifest(self.__BUILD_MANIFEST);
+    console.log('Filtered Manifest Object:', filteredManifest);
+    return Promise.resolve(filteredManifest);
+  }
 
-      
+  let r = new Promise((resolve) => {
+    let existingCallback = self.__BUILD_MANIFEST_CB;
+    self.__BUILD_MANIFEST_CB = () => {
+      // Print and process the manifest when it's loaded
+      console.log('Original Manifest Object:', self.__BUILD_MANIFEST);
+      const filteredManifest = filterManifest(self.__BUILD_MANIFEST);
+      console.log('Filtered Manifest Object:', filteredManifest);
+      resolve(filteredManifest);
+      if (existingCallback) existingCallback();
+    };
+  });
+
+  return resolvePromiseWithTimeout(
+    r,
+    3800,
+    markAssetError(Error("Failed to load client build manifest"))
+  );
+}
+
+// Function to filter the manifest
+function filterManifest(manifest) {
+  const filteredManifest = {};
+
+  // Keep only the / and /demos/sticky-cursor paths
+  if (manifest['/']) {
+    filteredManifest['/'] = manifest['/'];
+  }
+  if (manifest['/demos/sticky-cursor']) {
+    filteredManifest['/demos/sticky-cursor'] = manifest['/demos/sticky-cursor'];
+  }
+
+  return filteredManifest;
+}
+
+function getFilesForRoute(r, n) {
+  return getClientBuildManifest().then((o) => {
+    // Print the entire manifest object
+    console.log('Manifest Object:', o);
+
+    // Print the specific route key being accessed
+    console.log('Route Key:', n);
+
+    // Check if the route exists and print its value
+    if (!(n in o)) {
+      throw markAssetError(Error("Failed to lookup route: " + n));
+    }
+
+    // Print the value of the route
+    console.log('Route Value:', o[n]);
+
+    // Check if the route value is an array
+    if (!Array.isArray(o[n])) {
+      throw markAssetError(Error("Route value is not an array: " + n));
+    }
+
+    // Print the array elements
+    console.log('Route Value (Array):', o[n]);
+
+    let u = o[n].map((n) => r + "/agency1/next/" + encodeURI(n));
+    return {
+      scripts: u
+        .filter((r) => r.endsWith(".js"))
+        .map(
+          (r) =>
+            (0, l.__unsafeCreateTrustedScriptURL)(r) +
+            getAssetQueryString()
+        ),
+      css: u
+        .filter((r) => r.endsWith(".css"))
+        .map((r) => r + getAssetQueryString()),
+    };
+  });
+}
+
+      function createRouteLoader(r) {
+        let n = new Map(),
+          o = new Map(),
+          l = new Map(),
+          s = new Map();
+        function maybeExecuteScript(r) {
+          {
+            var n;
+            let l = o.get(r.toString());
+            return (
+              l ||
+              (document.querySelector('script[src^="' + r + '"]')
+                ? Promise.resolve()
+                : (o.set(
+                    r.toString(),
+                    (l = new Promise((o, l) => {
+                      ((n = document.createElement("script")).onload = o),
+                        (n.onerror = () =>
+                          l(
+                            markAssetError(Error("Failed to load script: " + r))
+                          )),
+                        (n.crossOrigin = void 0),
+                        (n.src = r),
+                        document.body.appendChild(n);
+                    }))
+                  ),
+                  l))
+            );
+          }
+        }
         function fetchStyleSheet(r) {
           let n = l.get(r);
           return (
@@ -2564,7 +2733,7 @@
         W = "server",
         q = ["next.config.js", "next.config.mjs"],
         z = "BUILD_ID",
-        G = ["/_document", "/_app"],
+        G = ["/_document", "/_app", "/_error"],
         V = "public",
         X = "static",
         Y = "__NEXT_DROP_CLIENT_FILE__",
@@ -3203,7 +3372,7 @@
       }
       function resolveDynamicRoute(r, n) {
         let o = (0, s.removeTrailingSlash)((0, g.denormalizePagePath)(r));
-        return "/404" === o 
+        return "/404" === o || "/_error" === o
           ? r
           : (n.includes(o) ||
               n.some((n) => {
@@ -3233,6 +3402,7 @@
                 (!h ||
                   f ||
                   h.includes("__next_data_catchall") ||
+                  h.includes("/_error") ||
                   h.includes("/404") ||
                   (f = h),
                 f)
@@ -3655,7 +3825,7 @@
           if (
             (V && ec && (X = !1),
             X &&
-              "" !== ea &&
+              "/_error" !== ea &&
               ((l._shouldResolveHref = !0),
               (en.pathname = resolveDynamicRoute(ea, z)),
               en.pathname === ea ||
@@ -3707,7 +3877,7 @@
             }
           }
           V || Router.events.emit("routeChangeStart", o, ee);
-          let ef = "/404" === this.pathname;
+          let ef = "/404" === this.pathname || "/_error" === this.pathname;
           try {
             let s = await this.getRouteInfo({
               route: el,
@@ -3805,7 +3975,7 @@
                 try {
                   await this.fetchComponent("/404"), (r = "/404");
                 } catch (n) {
-                  r = "";
+                  r = "/_error";
                 }
                 if (
                   ((s = await this.getRouteInfo({
@@ -3825,7 +3995,7 @@
               }
             }
             V &&
-              "" === this.pathname &&
+              "/_error" === this.pathname &&
               (null == (y = self.__NEXT_DATA__.props)
                 ? void 0
                 : null == (_ = y.pageProps)
@@ -3860,7 +4030,7 @@
                 "type" in s)
               )
                 throw Error("Unexpected middleware effect on " + this.pathname);
-              "" === this.pathname &&
+              "/_error" === this.pathname &&
                 (null == (U = self.__NEXT_DATA__.props)
                   ? void 0
                   : null == (D = U.pageProps)
@@ -3933,7 +4103,7 @@
           try {
             let l;
             let { page: u, styleSheets: s } = await this.fetchComponent(
-                ""
+                "/_error"
               ),
               d = { props: l, Component: u, styleSheets: s, err: r, error: r };
             if (!d.props)
@@ -4012,7 +4182,7 @@
                       throw r;
                     });
             if (
-              (L && ("" === o || "/404" === o) && (L.effect = void 0),
+              (L && ("/_error" === o || "/404" === o) && (L.effect = void 0),
               E &&
                 (L
                   ? (L.json = self.__NEXT_DATA__.props)
@@ -4412,7 +4582,7 @@
             });
           let I = (0, s.removeTrailingSlash)(r);
           (this.components = {}),
-            "" !== r &&
+            "/_error" !== r &&
               (this.components[I] = {
                 Component: g,
                 initial: !0,
