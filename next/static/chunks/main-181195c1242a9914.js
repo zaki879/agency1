@@ -796,19 +796,7 @@
           b
         );
       }
-      async function render(r) {
-        if (r.err) {
-          await renderError(r);
-          return;
-        }
-        try {
-          await doRender(r);
-        } catch (o) {
-          let n = (0, W.getProperError)(o);
-          if (n.cancelled) throw n;
-          await renderError({ ...r, err: n });
-        }
-      }
+  
       async function hydrate(r) {
         let n = u.err;
         try {
@@ -872,7 +860,7 @@
           (ee = await l._initialMatchesMiddlewarePromise);
         let o = { App: y, initial: !0, Component: b, props: u.props, err: n };
         (null == r ? void 0 : r.beforeRender) && (await r.beforeRender()),
-          render(o);
+         
       }
       ("function" == typeof n.default ||
         ("object" == typeof n.default && null !== n.default)) &&
