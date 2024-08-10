@@ -1539,47 +1539,51 @@ xxxx        );
                 .finally(() => (null == u ? void 0 : u()));
             });
           },
-          prefetch(n) {
-            let o;
-            return (o = navigator.connection) &&
-              (o.saveData || /2g/.test(o.effectiveType))
-              ? Promise.resolve()
-              : getFilesForRoute(r, n)
-                  .then((r) =>
-                    Promise.all(
-                      f
-                        ? r.scripts.map((r) => {
-                            var n, o, l;
-                            return (
-                              (n = r.toString()),
-                              (o = "script"),
-                              new Promise((r, u) => {
-                                let s =
-                                  '\n      link[rel="prefetch"][href^="' +
-                                  n +
-                                  '"],\n      link[rel="preload"][href^="' +
-                                  n +
-                                  '"],\n      script[src^="' +
-                                  n +
-                                  '"]';
-                                if (document.querySelector(s)) return r();
-                                (l = document.createElement("link")),
-                                  o && (l.as = o),
-                                  (l.rel = "prefetch"),
-                                  (l.crossOrigin = void 0),
-                                  (l.onload = r),
-                      
-                          
-                        : []
-                    )
-                  )
-                  .then(() => {
-                    (0, u.requestIdleCallback)(() =>
-                      this.loadRoute(n, !0).catch(() => {})
+         prefetch(n) {
+    let o;
+    return (o = navigator.connection) &&
+      (o.saveData || /2g/.test(o.effectiveType))
+      ? Promise.resolve()
+      : getFilesForRoute(r, n)
+          .then((r) =>
+            Promise.all(
+              f
+                ? r.scripts.map((r) => {
+                    var n, o, l;
+                    return (
+                      (n = r.toString()),
+                      (o = "script"),
+                      new Promise((r, u) => {
+                        let s =
+                          '\n      link[rel="prefetch"][href^="' +
+                          n +
+                          '"],\n      link[rel="preload"][href^="' +
+                          n +
+                          '"],\n      script[src^="' +
+                          n +
+                          '"]';
+                        if (document.querySelector(s)) return r();
+                        (l = document.createElement("link")),
+                          o && (l.as = o),
+                          (l.rel = "prefetch"),
+                          (l.crossOrigin = void 0),
+                          (l.onload = r),
+                          (l.href = n),
+                          document.head.appendChild(l);
+                      })
                     );
                   })
-                  .catch(() => {});
-          },
+                : []
+            )
+          )
+          .then(() => {
+            (0, u.requestIdleCallback)(() =>
+              this.loadRoute(n, !0).catch(() => {})
+            );
+          })
+          .catch(() => {});
+},
+
         };
       }
       ("function" == typeof n.default ||
