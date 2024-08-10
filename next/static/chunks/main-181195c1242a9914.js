@@ -1569,7 +1569,7 @@ xxxx        );
                                   (l.crossOrigin = void 0),
                                   (l.onload = r),
                       
-                          )x
+                          
                         : []
                     )
                   )
