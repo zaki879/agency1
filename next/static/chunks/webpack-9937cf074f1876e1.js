@@ -113,14 +113,14 @@
     }),
     (__webpack_require__.u = function (e) {
       return 3737 === e
-        ? "static/chunks/fb7d5399-c51a83b9d8df5ab4.js"
+        ? "https://zaki879.github.io/agency1/next/static/chunks/fb7d5399-c51a83b9d8df5ab4.js"
         : 5029 === e
-        ? "static/chunks/5029-8285f2ab41614c92.js"
+        ? "https://zaki879.github.io/agency1/next/static/chunks/5029-8285f2ab41614c92.js"
         : 6831 === e
-        ? "static/chunks/6831-509fbe8ed82134c6.js"
+        ? "https://zaki879.github.io/agency1/next/static/chunks/6831-509fbe8ed82134c6.js"
         : 3637 === e
-        ? "static/chunks/3637-2a791aa113b5c487.js"
-        : "static/chunks/" +
+        ? "https://zaki879.github.io/agency1/next/static/chunks/3637-2a791aa113b5c487.js"
+        : "https://zaki879.github.io/agency1/next/static/chunks/" +
           ({ 447: "4d99978a", 7664: "reactPlayerPreview" }[e] || e) +
           "." +
           {
@@ -142,7 +142,7 @@
     }),
     (__webpack_require__.miniCssF = function (e) {
       return (
-        "static/css/" +
+        "https://zaki879.github.io/agency1/next/static/css/" +
         {
           80: "1bad1bf6fe65784a",
           299: "8a159426bd072460",
