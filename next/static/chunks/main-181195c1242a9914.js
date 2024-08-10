@@ -1415,20 +1415,27 @@
         });
       }
       function getClientBuildManifest() {
-        if (self.__BUILD_MANIFEST)
-          return Promise.resolve(self.__BUILD_MANIFEST);
-        let r = new Promise((r) => {
-          let n = self.__BUILD_MANIFEST_CB;
-          self.__BUILD_MANIFEST_CB = () => {
-            r(self.__BUILD_MANIFEST), n && n();
-          };
-        });
-        return resolvePromiseWithTimeout(
-          r,
-          3800,
-          markAssetError(Error("Failed to load client build manifest"))
-        );
-      }
+  if (self.__BUILD_MANIFEST) {
+    console.log('Manifest Object:', self.__BUILD_MANIFEST); // Print the manifest if it's already available
+    return Promise.resolve(self.__BUILD_MANIFEST);
+  }
+
+  let r = new Promise((resolve) => {
+    let existingCallback = self.__BUILD_MANIFEST_CB;
+    self.__BUILD_MANIFEST_CB = () => {
+      console.log('Manifest Object:', self.__BUILD_MANIFEST); // Print the manifest when it's loaded
+      resolve(self.__BUILD_MANIFEST);
+      if (existingCallback) existingCallback();
+    };
+  });
+
+  return resolvePromiseWithTimeout(
+    r,
+    3800,
+    markAssetError(Error("Failed to load client build manifest"))
+  );
+}
+
 function getFilesForRoute(r, n) {
   return getClientBuildManifest().then((o) => {
     // Print the entire manifest object
