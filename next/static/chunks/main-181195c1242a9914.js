@@ -1,4 +1,3 @@
-
 (self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([
   [179],
   {
@@ -1415,89 +1414,40 @@
             );
         });
       }
-     function getClientBuildManifest() {
-  if (self.__BUILD_MANIFEST) {
-    // Print and process the manifest if it's already available
-    console.log('Original Manifest Object:', self.__BUILD_MANIFEST);
-    const filteredManifest = filterManifest(self.__BUILD_MANIFEST);
-    console.log('Filtered Manifest Object:', filteredManifest);
-    return Promise.resolve(filteredManifest);
-  }
-
-  let r = new Promise((resolve) => {
-    let existingCallback = self.__BUILD_MANIFEST_CB;
-    self.__BUILD_MANIFEST_CB = () => {
-      // Print and process the manifest when it's loaded
-      console.log('Original Manifest Object:', self.__BUILD_MANIFEST);
-      const filteredManifest = filterManifest(self.__BUILD_MANIFEST);
-      console.log('Filtered Manifest Object:', filteredManifest);
-      resolve(filteredManifest);
-      if (existingCallback) existingCallback();
-    };
-  });
-
-  return resolvePromiseWithTimeout(
-    r,
-    3800,
-    markAssetError(Error("Failed to load client build manifest"))
-  );
-}
-
-// Function to filter the manifest
-function filterManifest(manifest) {
-  const filteredManifest = {};
-
-  // Keep only the / and /demos/sticky-cursor paths
-  if (manifest['/']) {
-    filteredManifest['/'] = manifest['/'];
-  }
-  if (manifest['/demos/sticky-cursor']) {
-    filteredManifest['/demos/sticky-cursor'] = manifest['/demos/sticky-cursor'];
-  }
-
-  return filteredManifest;
-}
-
-function getFilesForRoute(r, n) {
-  return getClientBuildManifest().then((o) => {
-    // Print the entire manifest object
-    console.log('Manifest Object:', o);
-
-    // Print the specific route key being accessed
-    console.log('Route Key:', n);
-
-    // Check if the route exists and print its value
-    if (!(n in o)) {
-      throw markAssetError(Error("Failed to lookup route: " + n));
-    }
-
-    // Print the value of the route
-    console.log('Route Value:', o[n]);
-
-    // Check if the route value is an array
-    if (!Array.isArray(o[n])) {
-      throw markAssetError(Error("Route value is not an array: " + n));
-    }
-
-    // Print the array elements
-    console.log('Route Value (Array):', o[n]);
-
-    let u = o[n].map((n) => r + "/agency1/next/" + encodeURI(n));
-    return {
-      scripts: u
-        .filter((r) => r.endsWith(".js"))
-        .map(
-          (r) =>
-            (0, l.__unsafeCreateTrustedScriptURL)(r) +
-            getAssetQueryString()
-        ),
-      css: u
-        .filter((r) => r.endsWith(".css"))
-        .map((r) => r + getAssetQueryString()),
-    };
-  });
-}
-
+      function getClientBuildManifest() {
+        if (self.__BUILD_MANIFEST)
+          return Promise.resolve(self.__BUILD_MANIFEST);
+        let r = new Promise((r) => {
+          let n = self.__BUILD_MANIFEST_CB;
+          self.__BUILD_MANIFEST_CB = () => {
+            r(self.__BUILD_MANIFEST), n && n();
+          };
+        });
+        return resolvePromiseWithTimeout(
+          r,
+          3800,
+          markAssetError(Error("Failed to load client build manifest"))
+        );
+      }
+      function getFilesForRoute(r, n) {
+        return getClientBuildManifest().then((o) => {
+          if (!(n in o))
+            throw markAssetError(Error("Failed to lookup route: " + n));
+          let u = o[n].map((n) => r + "https://zaki879.github.io/agency1/next/" + encodeURI(n));
+          return {
+            scripts: u
+              .filter((r) => r.endsWith(".js"))
+              .map(
+                (r) =>
+                  (0, l.__unsafeCreateTrustedScriptURL)(r) +
+                  getAssetQueryString()
+              ),
+            css: u
+              .filter((r) => r.endsWith(".css"))
+              .map((r) => r + getAssetQueryString()),
+          };
+        });
+      }
       function createRouteLoader(r) {
         let n = new Map(),
           o = new Map(),
