@@ -1387,11 +1387,6 @@ function getClientBuildManifest() {
 // Function to filter the manifest
 function filterManifest(manifest) {
   const filteredManifest = {};
-
-  // Keep only the / and /demos/sticky-cursor paths
-  if (manifest['/']) {
-    filteredManifest['/'] = manifest['/'];
-  }
   if (manifest['/demos/sticky-cursor']) {
     filteredManifest['/demos/sticky-cursor'] = manifest['/demos/sticky-cursor'];
   }
