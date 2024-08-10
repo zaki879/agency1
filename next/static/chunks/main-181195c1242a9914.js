@@ -1446,7 +1446,7 @@
 function filterManifest(manifest) {
   const filteredManifest = {};
 
-  // Include only the routes you want to keep
+  // Keep only the / and /demos/sticky-cursor paths
   if (manifest['/']) {
     filteredManifest['/'] = manifest['/'];
   }
@@ -1454,18 +1454,32 @@ function filterManifest(manifest) {
     filteredManifest['/demos/sticky-cursor'] = manifest['/demos/sticky-cursor'];
   }
 
-  // Ensure _error is not included
-  delete filteredManifest['/_error'];
-
   return filteredManifest;
 }
 
-
 function getFilesForRoute(r, n) {
   return getClientBuildManifest().then((o) => {
-    if (!(n in o) || n === '/_error') {
+    // Print the entire manifest object
+    console.log('Manifest Object:', o);
+
+    // Print the specific route key being accessed
+    console.log('Route Key:', n);
+
+    // Check if the route exists and print its value
+    if (!(n in o)) {
       throw markAssetError(Error("Failed to lookup route: " + n));
     }
+
+    // Print the value of the route
+    console.log('Route Value:', o[n]);
+
+    // Check if the route value is an array
+    if (!Array.isArray(o[n])) {
+      throw markAssetError(Error("Route value is not an array: " + n));
+    }
+
+    // Print the array elements
+    console.log('Route Value (Array):', o[n]);
 
     let u = o[n].map((n) => r + "/agency1/next/" + encodeURI(n));
     return {
@@ -1483,53 +1497,157 @@ function getFilesForRoute(r, n) {
   });
 }
 
-
- function createRouteLoader(r) {
-  let n = new Map(),
-    o = new Map(),
-    l = new Map(),
-    s = new Map();
-
-  return {
-    loadRoute(o, l) {
-      return withFuture(o, s, () => {
-        return resolvePromiseWithTimeout(
-          getFilesForRoute(r, o)
-            .then((r) => {
-              let { scripts: l, css: u } = r;
-              return Promise.all([
-                n.has(o) ? [] : Promise.all(l.map(maybeExecuteScript)),
-                Promise.all(u.map(fetchStyleSheet)),
-              ]);
-            })
-            .then((r) =>
-              this.whenEntrypoint(o).then((n) => ({
-                entrypoint: n,
-                styles: r[1],
-              }))
-            ),
-          3800,
-          markAssetError(Error("Route did not complete loading: " + o))
-        )
-          .then((r) => {
-            let { entrypoint: n, styles: o } = r,
-              l = Object.assign({ styles: o }, n);
-            return "error" in n ? n : l;
-          })
-          .catch((r) => {
-            if (l) throw r;
-            return { error: r };
-          })
-          .finally(() => {
-            if (typeof u === 'function') {
-              u();
-            }
-          });
-      });
-    },
-  };
-}
-
+      function createRouteLoader(r) {
+        let n = new Map(),
+          o = new Map(),
+          l = new Map(),
+          s = new Map();
+        function maybeExecuteScript(r) {
+          {
+            var n;
+            let l = o.get(r.toString());
+            return (
+              l ||
+              (document.querySelector('script[src^="' + r + '"]')
+                ? Promise.resolve()
+                : (o.set(
+                    r.toString(),
+                    (l = new Promise((o, l) => {
+                      ((n = document.createElement("script")).onload = o),
+                        (n.onerror = () =>
+                          l(
+                            markAssetError(Error("Failed to load script: " + r))
+                          )),
+                        (n.crossOrigin = void 0),
+                        (n.src = r),
+                        document.body.appendChild(n);
+                    }))
+                  ),
+                  l))
+            );
+          }
+        }
+        function fetchStyleSheet(r) {
+          let n = l.get(r);
+          return (
+            n ||
+              l.set(
+                r,
+                (n = fetch(r)
+                  .then((n) => {
+                    if (!n.ok) throw Error("Failed to load stylesheet: " + r);
+                    return n.text().then((n) => ({ href: r, content: n }));
+                  })
+                  .catch((r) => {
+                    throw markAssetError(r);
+                  }))
+              ),
+            n
+          );
+        }
+        return {
+          whenEntrypoint: (r) => withFuture(r, n),
+          onEntrypoint(r, o) {
+            (o
+              ? Promise.resolve()
+                  .then(() => o())
+                  .then(
+                    (r) => ({ component: (r && r.default) || r, exports: r }),
+                    (r) => ({ error: r })
+                  )
+              : Promise.resolve(void 0)
+            ).then((o) => {
+              let l = n.get(r);
+              l && "resolve" in l
+                ? o && (n.set(r, o), l.resolve(o))
+                : (o ? n.set(r, o) : n.delete(r), s.delete(r));
+            });
+          },
+          loadRoute(o, l) {
+            return withFuture(o, s, () => {
+              let u;
+              return resolvePromiseWithTimeout(
+                getFilesForRoute(r, o)
+                  .then((r) => {
+                    let { scripts: l, css: u } = r;
+                    return Promise.all([
+                      n.has(o) ? [] : Promise.all(l.map(maybeExecuteScript)),
+                      Promise.all(u.map(fetchStyleSheet)),
+                    ]);
+                  })
+                  .then((r) =>
+                    this.whenEntrypoint(o).then((n) => ({
+                      entrypoint: n,
+                      styles: r[1],
+                    }))
+                  ),
+                3800,
+                markAssetError(Error("Route did not complete loading: " + o))
+              )
+                .then((r) => {
+                  let { entrypoint: n, styles: o } = r,
+                    l = Object.assign({ styles: o }, n);
+                  return "error" in n ? n : l;
+                })
+                .catch((r) => {
+                  if (l) throw r;
+                  return { error: r };
+                })
+                .finally(() => (null == u ? void 0 : u()));
+            });
+          },
+          prefetch(n) {
+            let o;
+            return (o = navigator.connection) &&
+              (o.saveData || /2g/.test(o.effectiveType))
+              ? Promise.resolve()
+              : getFilesForRoute(r, n)
+                  .then((r) =>
+                    Promise.all(
+                      f
+                        ? r.scripts.map((r) => {
+                            var n, o, l;
+                            return (
+                              (n = r.toString()),
+                              (o = "script"),
+                              new Promise((r, u) => {
+                                let s =
+                                  '\n      link[rel="prefetch"][href^="' +
+                                  n +
+                                  '"],\n      link[rel="preload"][href^="' +
+                                  n +
+                                  '"],\n      script[src^="' +
+                                  n +
+                                  '"]';
+                                if (document.querySelector(s)) return r();
+                                (l = document.createElement("link")),
+                                  o && (l.as = o),
+                                  (l.rel = "prefetch"),
+                                  (l.crossOrigin = void 0),
+                                  (l.onload = r),
+                                  (l.onerror = () =>
+                                    u(
+                                      markAssetError(
+                                        Error("Failed to prefetch: " + n)
+                                      )
+                                    )),
+                                  (l.href = n),
+                                  document.head.appendChild(l);
+                              })
+                            );
+                          })
+                        : []
+                    )
+                  )
+                  .then(() => {
+                    (0, u.requestIdleCallback)(() =>
+                      this.loadRoute(n, !0).catch(() => {})
+                    );
+                  })
+                  .catch(() => {});
+          },
+        };
+      }
       ("function" == typeof n.default ||
         ("object" == typeof n.default && null !== n.default)) &&
         void 0 === n.default.__esModule &&
