@@ -748,9 +748,7 @@
         try {
           await doRender(r);
         } catch (o) {
-          let n = (0, W.getProperError)(o);
-          if (n.cancelled) throw n;
-          await renderError({ ...r, err: n });
+          
         }
       }
       async function hydrate(r) {
