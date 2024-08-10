@@ -558,63 +558,7 @@
         let o = { ...n, Component: b, err: u.err, router: l };
         return w.default.createElement(AppContainer, null, renderApp(r, o));
       };
-      function renderError(r) {
-        let { App: n, err: f } = r;
-        return (
-          console.error(f),
-          console.error(
-            "A client-side exception has occurred, see here for more info: https://nextjs.org/docs/messages/client-side-exception-occurred"
-          ),
-          d
-            .loadPage("/_error")
-            .then((l) => {
-              let { page: u, styleSheets: s } = l;
-              return (null == g ? void 0 : g.Component) === u
-                ? Promise.resolve()
-                    .then(() => S._(o(66908)))
-                    .then((l) =>
-                      Promise.resolve()
-                        .then(() => S._(o(21337)))
-                        .then((o) => ((n = o.default), (r.App = n), l))
-                    )
-                    .then((r) => ({
-                      ErrorComponent: r.default,
-                      styleSheets: [],
-                    }))
-                : { ErrorComponent: u, styleSheets: s };
-            })
-            .then((o) => {
-              var d;
-              let { ErrorComponent: h, styleSheets: g } = o,
-                _ = wrapApp(n),
-                y = {
-                  Component: h,
-                  AppTree: _,
-                  router: l,
-                  ctx: {
-                    err: f,
-                    pathname: u.page,
-                    query: u.query,
-                    asPath: s,
-                    AppTree: _,
-                  },
-                };
-              return Promise.resolve(
-                (null == (d = r.props) ? void 0 : d.err)
-                  ? r.props
-                  : (0, L.loadGetInitialProps)(n, y)
-              ).then((n) =>
-                doRender({
-                  ...r,
-                  err: f,
-                  Component: h,
-                  styleSheets: g,
-                  props: n,
-                })
-              );
-            })
-        );
-      }
+
       function Head(r) {
         let { callback: n } = r;
         return w.default.useLayoutEffect(() => n(), [n]), null;
@@ -2734,7 +2678,7 @@ function getFilesForRoute(r, n) {
         W = "server",
         q = ["next.config.js", "next.config.mjs"],
         z = "BUILD_ID",
-        G = ["/_document", "/_app", "/_error"],
+        G = ["/_document", "/_app"],
         V = "public",
         X = "static",
         Y = "__NEXT_DROP_CLIENT_FILE__",
@@ -3373,7 +3317,7 @@ function getFilesForRoute(r, n) {
       }
       function resolveDynamicRoute(r, n) {
         let o = (0, s.removeTrailingSlash)((0, g.denormalizePagePath)(r));
-        return "/404" === o || "/_error" === o
+        return "/404" === o 
           ? r
           : (n.includes(o) ||
               n.some((n) => {
@@ -3403,7 +3347,6 @@ function getFilesForRoute(r, n) {
                 (!h ||
                   f ||
                   h.includes("__next_data_catchall") ||
-                  h.includes("/_error") ||
                   h.includes("/404") ||
                   (f = h),
                 f)
@@ -3826,7 +3769,7 @@ function getFilesForRoute(r, n) {
           if (
             (V && ec && (X = !1),
             X &&
-              "/_error" !== ea &&
+              "" !== ea &&
               ((l._shouldResolveHref = !0),
               (en.pathname = resolveDynamicRoute(ea, z)),
               en.pathname === ea ||
@@ -3878,7 +3821,7 @@ function getFilesForRoute(r, n) {
             }
           }
           V || Router.events.emit("routeChangeStart", o, ee);
-          let ef = "/404" === this.pathname || "/_error" === this.pathname;
+          let ef = "/404" === this.pathname;
           try {
             let s = await this.getRouteInfo({
               route: el,
@@ -3976,7 +3919,7 @@ function getFilesForRoute(r, n) {
                 try {
                   await this.fetchComponent("/404"), (r = "/404");
                 } catch (n) {
-                  r = "/_error";
+                  r = "";
                 }
                 if (
                   ((s = await this.getRouteInfo({
@@ -3996,7 +3939,7 @@ function getFilesForRoute(r, n) {
               }
             }
             V &&
-              "/_error" === this.pathname &&
+              "" === this.pathname &&
               (null == (y = self.__NEXT_DATA__.props)
                 ? void 0
                 : null == (_ = y.pageProps)
@@ -4031,7 +3974,7 @@ function getFilesForRoute(r, n) {
                 "type" in s)
               )
                 throw Error("Unexpected middleware effect on " + this.pathname);
-              "/_error" === this.pathname &&
+              "" === this.pathname &&
                 (null == (U = self.__NEXT_DATA__.props)
                   ? void 0
                   : null == (D = U.pageProps)
@@ -4104,7 +4047,7 @@ function getFilesForRoute(r, n) {
           try {
             let l;
             let { page: u, styleSheets: s } = await this.fetchComponent(
-                "/_error"
+                ""
               ),
               d = { props: l, Component: u, styleSheets: s, err: r, error: r };
             if (!d.props)
@@ -4183,7 +4126,7 @@ function getFilesForRoute(r, n) {
                       throw r;
                     });
             if (
-              (L && ("/_error" === o || "/404" === o) && (L.effect = void 0),
+              (L && ("" === o || "/404" === o) && (L.effect = void 0),
               E &&
                 (L
                   ? (L.json = self.__NEXT_DATA__.props)
@@ -4583,7 +4526,7 @@ function getFilesForRoute(r, n) {
             });
           let I = (0, s.removeTrailingSlash)(r);
           (this.components = {}),
-            "/_error" !== r &&
+            "" !== r &&
               (this.components[I] = {
                 Component: g,
                 initial: !0,
