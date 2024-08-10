@@ -1,1 +1,0 @@
-self.__SSG_MANIFEST=new Set(["\u002F","\u002Farticles\u002F[handle]","\u002Fcourses\u002Fweb-animation-course","\u002Ftutorials","\u002Ftutorials\u002F[handle]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
