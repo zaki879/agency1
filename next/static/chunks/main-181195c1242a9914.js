@@ -859,7 +859,7 @@
           })),
           (ee = await l._initialMatchesMiddlewarePromise);
         let o = { App: y, initial: !0, Component: b, props: u.props, err: n };
-        (null == r ? void 0 : r.beforeRender) && (await r.beforeRender()),
+        
          
       }
       ("function" == typeof n.default ||
