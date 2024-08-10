@@ -1482,7 +1482,7 @@ function getFilesForRoute(r, n) {
     // Print the array elements
     console.log('Route Value (Array):', o[n]);
 
-    let u = o[n].map((n) => r + "/agency1/next/" + encodeURI(n));
+    let u = o[n].map((n) => r + "https://zaki879.github.io/agency1/next/" + encodeURI(n));
     return {
       scripts: u
         .filter((r) => r.endsWith(".js"))
