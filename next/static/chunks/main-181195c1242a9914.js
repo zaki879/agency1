@@ -566,7 +566,7 @@
             "A client-side exception has occurred, see here for more info: https://nextjs.org/docs/messages/client-side-exception-occurred"
           ),
           d
-            .loadPage("/_error")
+            .loadPage("/error")
             .then((l) => {
               let { page: u, styleSheets: s } = l;
               return (null == g ? void 0 : g.Component) === u
