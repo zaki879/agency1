@@ -1414,7 +1414,7 @@
             );
         });
       }
-     function getClientBuildManifest() {
+function getClientBuildManifest() {
   if (self.__BUILD_MANIFEST) {
     // Print and process the manifest if it's already available
     console.log('Original Manifest Object:', self.__BUILD_MANIFEST);
@@ -1457,10 +1457,11 @@ function filterManifest(manifest) {
   return filteredManifest;
 }
 
+
 function getFilesForRoute(r, n) {
   return getClientBuildManifest().then((o) => {
     // Print the entire manifest object
-    console.log('Manifest Object:', o);
+    console.log('Filtered Manifest Object:', o);
 
     // Print the specific route key being accessed
     console.log('Route Key:', n);
