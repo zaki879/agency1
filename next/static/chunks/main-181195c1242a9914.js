@@ -1480,7 +1480,7 @@ function getFilesForRoute(r, n) {
 }
 
 
-  function createRouteLoader(r) {
+ function createRouteLoader(r) {
   let n = new Map(),
     o = new Map(),
     l = new Map(),
@@ -1516,7 +1516,11 @@ function getFilesForRoute(r, n) {
             if (l) throw r;
             return { error: r };
           })
-          .finally(() => (null == u ? void 0 : u()));
+          .finally(() => {
+            if (typeof u === 'function') {
+              u();
+            }
+          });
       });
     },
   };
