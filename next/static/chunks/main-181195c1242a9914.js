@@ -1429,23 +1429,46 @@
           markAssetError(Error("Failed to load client build manifest"))
         );
       }
-      function getFilesForRoute(r, n) {
-        return getClientBuildManifest().then((o) => {
-          let u = o[n].map((n) =>  "https://zaki879.github.io/agency1/next/" + encodeURI(n));
-          return {
-            scripts: u
-              .filter((r) => r.endsWith(".js"))
-              .map(
-                (r) =>
-                  (0, l.__unsafeCreateTrustedScriptURL)(r) +
-                  getAssetQueryString()
-              ),
-            css: u
-              .filter((r) => r.endsWith(".css"))
-              .map((r) => r + getAssetQueryString()),
-          };
-        });
-      }
+function getFilesForRoute(r, n) {
+  return getClientBuildManifest().then((o) => {
+    // Print the entire manifest object
+    console.log('Manifest Object:', o);
+
+    // Print the specific route key being accessed
+    console.log('Route Key:', n);
+
+    // Check if the route exists and print its value
+    if (!(n in o)) {
+      throw markAssetError(Error("Failed to lookup route: " + n));
+    }
+
+    // Print the value of the route
+    console.log('Route Value:', o[n]);
+
+    // Check if the route value is an array
+    if (!Array.isArray(o[n])) {
+      throw markAssetError(Error("Route value is not an array: " + n));
+    }
+
+    // Print the array elements
+    console.log('Route Value (Array):', o[n]);
+
+    let u = o[n].map((n) => r + "/agency1/next/" + encodeURI(n));
+    return {
+      scripts: u
+        .filter((r) => r.endsWith(".js"))
+        .map(
+          (r) =>
+            (0, l.__unsafeCreateTrustedScriptURL)(r) +
+            getAssetQueryString()
+        ),
+      css: u
+        .filter((r) => r.endsWith(".css"))
+        .map((r) => r + getAssetQueryString()),
+    };
+  });
+}
+
       function createRouteLoader(r) {
         let n = new Map(),
           o = new Map(),
