@@ -1414,17 +1414,23 @@
             );
         });
       }
-      function getClientBuildManifest() {
+     function getClientBuildManifest() {
   if (self.__BUILD_MANIFEST) {
-    console.log('Manifest Object:', self.__BUILD_MANIFEST); // Print the manifest if it's already available
-    return Promise.resolve(self.__BUILD_MANIFEST);
+    // Print and process the manifest if it's already available
+    console.log('Original Manifest Object:', self.__BUILD_MANIFEST);
+    const filteredManifest = filterManifest(self.__BUILD_MANIFEST);
+    console.log('Filtered Manifest Object:', filteredManifest);
+    return Promise.resolve(filteredManifest);
   }
 
   let r = new Promise((resolve) => {
     let existingCallback = self.__BUILD_MANIFEST_CB;
     self.__BUILD_MANIFEST_CB = () => {
-      console.log('Manifest Object:', self.__BUILD_MANIFEST); // Print the manifest when it's loaded
-      resolve(self.__BUILD_MANIFEST);
+      // Print and process the manifest when it's loaded
+      console.log('Original Manifest Object:', self.__BUILD_MANIFEST);
+      const filteredManifest = filterManifest(self.__BUILD_MANIFEST);
+      console.log('Filtered Manifest Object:', filteredManifest);
+      resolve(filteredManifest);
       if (existingCallback) existingCallback();
     };
   });
@@ -1434,6 +1440,21 @@
     3800,
     markAssetError(Error("Failed to load client build manifest"))
   );
+}
+
+// Function to filter the manifest
+function filterManifest(manifest) {
+  const filteredManifest = {};
+
+  // Keep only the / and /demos/sticky-cursor paths
+  if (manifest['/']) {
+    filteredManifest['/'] = manifest['/'];
+  }
+  if (manifest['/demos/sticky-cursor']) {
+    filteredManifest['/demos/sticky-cursor'] = manifest['/demos/sticky-cursor'];
+  }
+
+  return filteredManifest;
 }
 
 function getFilesForRoute(r, n) {
