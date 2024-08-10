@@ -1344,9 +1344,7 @@
           for (var o in n)
             Object.defineProperty(r, o, { enumerable: !0, get: n[o] });
         })(n, {
-          markAssetError: function () {
-            return markAssetError;
-          },
+      
           isAssetError: function () {
             return isAssetError;
           },
@@ -1381,9 +1379,7 @@
         );
       }
       let d = Symbol("ASSET_LOAD_ERROR");
-      function markAssetError(r) {
-        return Object.defineProperty(r, d, {});
-      }
+  
       function isAssetError(r) {
         return r && d in r;
       }
@@ -1426,13 +1422,12 @@
         return resolvePromiseWithTimeout(
           r,
           3800,
-          markAssetError(Error("Failed to load client build manifest"))
-        );
+xxxx        );
       }
       function getFilesForRoute(r, n) {
         return getClientBuildManifest().then((o) => {
           if (!(n in o))
-            throw markAssetError(Error("Failed to lookup route: " + n));
+            throw Error(Error("Failed to lookup route: " + n));
           let u = o[n].map((n) => r + "https://zaki879.github.io/agency1/next/" + encodeURI(n));
           return {
             scripts: u
@@ -1467,7 +1462,6 @@
                       ((n = document.createElement("script")).onload = o),
                         (n.onerror = () =>
                           l(
-                            markAssetError(Error("Failed to load script: " + r))
                           )),
                         (n.crossOrigin = void 0),
                         (n.src = r),
@@ -1490,7 +1484,7 @@
                     return n.text().then((n) => ({ href: r, content: n }));
                   })
                   .catch((r) => {
-                    throw markAssetError(r);
+                    throw Error(r);
                   }))
               ),
             n
@@ -1533,7 +1527,6 @@
                     }))
                   ),
                 3800,
-                markAssetError(Error("Route did not complete loading: " + o))
               )
                 .then((r) => {
                   let { entrypoint: n, styles: o } = r,
@@ -1576,15 +1569,6 @@
                                   (l.rel = "prefetch"),
                                   (l.crossOrigin = void 0),
                                   (l.onload = r),
-                                  (l.onerror = () =>
-                                    u(
-                                      markAssetError(
-                                        Error("Failed to prefetch: " + n)
-                                      )
-                                    )),
-                                  (l.href = n),
-                                  document.head.appendChild(l);
-                              })
                             );
                           })
                         : []
