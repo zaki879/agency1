@@ -1571,109 +1571,105 @@ function getFilesForRoute(r, n) {
   l.set(r, n);
   return n;
 }
+return {
+  whenEntrypoint: (r) => withFuture(r, n),
+  onEntrypoint(r, o) {
+    (o
+      ? Promise.resolve()
+          .then(() => o())
+          .then(
+            (result) => ({ component: (result && result.default) || result, exports: result }),
+            (error) => ({ error })
+          )
+      : Promise.resolve(void 0)
+    ).then((result) => {
+      let cached = n.get(r);
+      if (cached && "resolve" in cached) {
+        result && (n.set(r, result), cached.resolve(result));
+      } else {
+        result ? n.set(r, result) : n.delete(r);
+        s.delete(r);
+      }
+    }).catch((error) => {
+      console.error("Error in onEntrypoint:", error);
+    });
+  },
+  loadRoute(o, l) {
+    return withFuture(o, s, () => {
+      let timeoutHandler;
+      return resolvePromiseWithTimeout(
+        getFilesForRoute(r, o)
+          .then((files) => {
+            let { scripts, css } = files;
+            return Promise.all([
+              n.has(o) ? [] : Promise.all(scripts.map(maybeExecuteScript)),
+              Promise.all(css.map(fetchStyleSheet)),
+            ]);
+          })
+          .then((results) =>
+            this.whenEntrypoint(o).then((entrypoint) => ({
+              entrypoint,
+              styles: results[1],
+            }))
+          ),
+        3800,
+        markAssetError(Error("Route did not complete loading: " + o))
+      )
+        .then((result) => {
+          let { entrypoint, styles } = result;
+          let combinedResult = Object.assign({ styles }, entrypoint);
+          return "error" in entrypoint ? entrypoint : combinedResult;
+        })
+        .catch((error) => {
+          if (l) throw error;
+          return { error };
+        })
+        .finally(() => {
+          if (timeoutHandler) timeoutHandler();
+        });
+    });
+  },
+  prefetch(n) {
+    let connection = navigator.connection;
+    if (connection && (connection.saveData || /2g/.test(connection.effectiveType))) {
+      return Promise.resolve();
+    }
+    
+    return getFilesForRoute(r, n)
+      .then((files) =>
+        Promise.all(
+          f
+            ? files.scripts.map((scriptUrl) => {
+                return new Promise((resolve, reject) => {
+                  let linkElement = document.createElement("link");
+                  linkElement.rel = "prefetch";
+                  linkElement.href = scriptUrl;
+                  linkElement.onload = resolve;
+                  linkElement.onerror = () => reject(markAssetError(Error("Failed to prefetch: " + scriptUrl)));
+                  document.head.appendChild(linkElement);
+                });
+              })
+            : []
+        )
+      )
+      .then(() => {
+        if (typeof u.requestIdleCallback === 'function') {
+          u.requestIdleCallback(() => {
+            this.loadRoute(n, true).catch(() => {});
+          });
+        } else {
+          // Fallback for environments where requestIdleCallback is not available
+          setTimeout(() => {
+            this.loadRoute(n, true).catch(() => {});
+          }, 0);
+        }
+      })
+      .catch((error) => {
+        console.error("Error in prefetch:", error);
+      });
+  },
+};
 
-        return {
-          whenEntrypoint: (r) => withFuture(r, n),
-          onEntrypoint(r, o) {
-            (o
-              ? Promise.resolve()
-                  .then(() => o())
-                  .then(
-                    (r) => ({ component: (r && r.default) || r, exports: r }),
-                    (r) => ({ error: r })
-                  )
-              : Promise.resolve(void 0)
-            ).then((o) => {
-              let l = n.get(r);
-              l && "resolve" in l
-                ? o && (n.set(r, o), l.resolve(o))
-                : (o ? n.set(r, o) : n.delete(r), s.delete(r));
-            });
-          },
-          loadRoute(o, l) {
-            return withFuture(o, s, () => {
-              let u;
-              return resolvePromiseWithTimeout(
-                getFilesForRoute(r, o)
-                  .then((r) => {
-                    let { scripts: l, css: u } = r;
-                    return Promise.all([
-                      n.has(o) ? [] : Promise.all(l.map(maybeExecuteScript)),
-                      Promise.all(u.map(fetchStyleSheet)),
-                    ]);
-                  })
-                  .then((r) =>
-                    this.whenEntrypoint(o).then((n) => ({
-                      entrypoint: n,
-                      styles: r[1],
-                    }))
-                  ),
-                3800,
-                markAssetError(Error("Route did not complete loading: " + o))
-              )
-                .then((r) => {
-                  let { entrypoint: n, styles: o } = r,
-                    l = Object.assign({ styles: o }, n);
-                  return "error" in n ? n : l;
-                })
-                .catch((r) => {
-                  if (l) throw r;
-                  return { error: r };
-                })
-                .finally(() => (null == u ? void 0 : u()));
-            });
-          },
-          prefetch(n) {
-            let o;
-            return (o = navigator.connection) &&
-              (o.saveData || /2g/.test(o.effectiveType))
-              ? Promise.resolve()
-              : getFilesForRoute(r, n)
-                  .then((r) =>
-                    Promise.all(
-                      f
-                        ? r.scripts.map((r) => {
-                            var n, o, l;
-                            return (
-                              (n = r.toString()),
-                              (o = "script"),
-                              new Promise((r, u) => {
-                                let s =
-                                  '\n      link[rel="prefetch"][href^="' +
-                                  n +
-                                  '"],\n      link[rel="preload"][href^="' +
-                                  n +
-                                  '"],\n      script[src^="' +
-                                  n +
-                                  '"]';
-                                if (document.querySelector(s)) return r();
-                                (l = document.createElement("link")),
-                                  o && (l.as = o),
-                                  (l.rel = "prefetch"),
-                                  (l.crossOrigin = void 0),
-                                  (l.onload = r),
-                                  (l.onerror = () =>
-                                    u(
-                                      markAssetError(
-                                        Error("Failed to prefetch: " + n)
-                                      )
-                                    )),
-                                  (l.href = n),
-                                  document.head.appendChild(l);
-                              })
-                            );
-                          })
-                        : []
-                    )
-                  )
-                  .then(() => {
-                    (0, u.requestIdleCallback)(() =>
-                      this.loadRoute(n, !0).catch(() => {})
-                    );
-                  })
-                  .catch(() => {});
-          },
-        };
       }
       ("function" == typeof n.default ||
         ("object" == typeof n.default && null !== n.default)) &&
