@@ -1446,7 +1446,7 @@
 function filterManifest(manifest) {
   const filteredManifest = {};
 
-  // Keep only the / and /demos/sticky-cursor paths, and exclude /_error
+  // Include only the routes you want to keep
   if (manifest['/']) {
     filteredManifest['/'] = manifest['/'];
   }
@@ -1454,8 +1454,12 @@ function filterManifest(manifest) {
     filteredManifest['/demos/sticky-cursor'] = manifest['/demos/sticky-cursor'];
   }
 
+  // Ensure _error is not included
+  delete filteredManifest['/_error'];
+
   return filteredManifest;
 }
+
 
 function getFilesForRoute(r, n) {
   return getClientBuildManifest().then((o) => {
