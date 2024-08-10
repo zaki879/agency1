@@ -1539,50 +1539,41 @@ xxxx        );
                 .finally(() => (null == u ? void 0 : u()));
             });
           },
-         prefetch(n) {
+        prefetch(n) {
     let o;
     return (o = navigator.connection) &&
-      (o.saveData || /2g/.test(o.effectiveType))
-      ? Promise.resolve()
-      : getFilesForRoute(r, n)
-          .then((r) =>
-            Promise.all(
-              f
-                ? r.scripts.map((r) => {
-                    var n, o, l;
-                    return (
-                      (n = r.toString()),
-                      (o = "script"),
-                      new Promise((r, u) => {
-                        let s =
-                          '\n      link[rel="prefetch"][href^="' +
-                          n +
-                          '"],\n      link[rel="preload"][href^="' +
-                          n +
-                          '"],\n      script[src^="' +
-                          n +
-                          '"]';
-                        if (document.querySelector(s)) return r();
-                        (l = document.createElement("link")),
-                          o && (l.as = o),
-                          (l.rel = "prefetch"),
-                          (l.crossOrigin = void 0),
-                          (l.onload = r),
-                          (l.href = n),
-                          document.head.appendChild(l);
-                      })
-                    );
-                  })
-                : []
-            )
-          )
-          .then(() => {
-            (0, u.requestIdleCallback)(() =>
-              this.loadRoute(n, !0).catch(() => {})
-            );
-          })
-          .catch(() => {});
+        (o.saveData || /2g/.test(o.effectiveType))
+        ? Promise.resolve()
+        : getFilesForRoute(r, n)
+            .then((r) => {
+                return Promise.all(
+                    f
+                        ? r.scripts.map((scriptUrl) => {
+                            return new Promise((resolve, reject) => {
+                                let linkElement = document.createElement("link");
+                                let url = scriptUrl.toString();
+                                if (document.querySelector(`link[rel="prefetch"][href^="${url}"], link[rel="preload"][href^="${url}"], script[src^="${url}"]`)) {
+                                    return resolve();
+                                }
+                                linkElement.rel = "prefetch";
+                                linkElement.href = url;
+                                linkElement.crossOrigin = "anonymous";
+                                linkElement.onload = resolve;
+                                linkElement.onerror = () => reject(new Error(`Failed to prefetch: ${url}`));
+                                document.head.appendChild(linkElement);
+                            });
+                        })
+                        : []
+                );
+            })
+            .then(() => {
+                (0, u.requestIdleCallback)(() =>
+                    this.loadRoute(n, !0).catch(() => {})
+                );
+            })
+            .catch(() => {});
 },
+
 
         };
       }
