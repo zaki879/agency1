@@ -1594,10 +1594,17 @@ return {
       console.error("Error in onEntrypoint:", error);
     });
   },
-  loadRoute(o, l) {
-    return withFuture(o, s, () => {
-      let timeoutHandler;
-      return resolvePromiseWithTimeout(
+loadRoute(o, l) {
+  return withFuture(o, s, () => {
+    let timeoutHandler = null;
+    
+    // Wrap the promise in a timeout handler
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutHandler = () => reject(markAssetError(Error("Route did not complete loading: " + o)));
+    });
+
+    return Promise.race([
+      resolvePromiseWithTimeout(
         getFilesForRoute(r, o)
           .then((files) => {
             let { scripts, css } = files;
@@ -1612,8 +1619,8 @@ return {
               styles: results[1],
             }))
           ),
-        3800,
-        markAssetError(Error("Route did not complete loading: " + o))
+        3800, // Timeout duration
+        timeoutPromise
       )
         .then((result) => {
           let { entrypoint, styles } = result;
@@ -1621,14 +1628,19 @@ return {
           return "error" in entrypoint ? entrypoint : combinedResult;
         })
         .catch((error) => {
-          if (l) throw error;
-          return { error };
+          // Handle error based on the condition of `l`
+          if (l) {
+            throw error; // Re-throw if `l` is truthy
+          }
+          return { error }; // Return error object if `l` is falsy
         })
         .finally(() => {
+          // Ensure timeout handler is called
           if (timeoutHandler) timeoutHandler();
         });
-    });
-  },
+  });
+},
+
   prefetch(n) {
     let connection = navigator.connection;
     if (connection && (connection.saveData || /2g/.test(connection.effectiveType))) {
