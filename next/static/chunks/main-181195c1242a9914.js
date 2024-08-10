@@ -1545,24 +1545,33 @@ function getFilesForRoute(r, n) {
             );
           }
         }
-        function fetchStyleSheet(r) {
-          let n = l.get(r);
-          return (
-            n ||
-              l.set(
-                r,
-                (n = fetch(r)
-                  .then((n) => {
-                    if (!n.ok) throw Error("Failed to load stylesheet: " + r);
-                    return n.text().then((n) => ({ href: r, content: n }));
-                  })
-                  .catch((r) => {
-                    throw markAssetError(r);
-                  }))
-              ),
-            n
-          );
-        }
+  function fetchStyleSheet(r) {
+  // Check if the result is already cached
+  let n = l.get(r);
+  
+  if (n) {
+    return n;
+  }
+  
+  // Start the fetch process
+  n = fetch(r)
+    .then((response) => {
+      if (!response.ok) {
+        console.warn("Warning: Failed to load stylesheet: " + r);
+        return { href: r, content: '' }; // Return an empty content if the fetch fails
+      }
+      return response.text().then((content) => ({ href: r, content }));
+    })
+    .catch((error) => {
+      console.error("Error fetching stylesheet:", error);
+      return { href: r, content: '' }; // Return an empty content if there’s an error
+    });
+  
+  // Cache the result and return it
+  l.set(r, n);
+  return n;
+}
+
         return {
           whenEntrypoint: (r) => withFuture(r, n),
           onEntrypoint(r, o) {
