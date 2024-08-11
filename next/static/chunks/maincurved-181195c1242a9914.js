@@ -466,7 +466,7 @@
           (E = u.defaultLocale);
         let n = u.assetPrefix || "";
         if (
-          (self.__next_set_public_path__("" + n + "/agency1/next/"),
+          (self.__next_set_public_path__("" + n + "https://zaki879.github.io/agency1/next/"),
           (0, N.setConfig)({
             serverRuntimeConfig: {},
             publicRuntimeConfig: u.runtimeConfig || {},
@@ -1433,7 +1433,7 @@
         return getClientBuildManifest().then((o) => {
           if (!(n in o))
             throw markAssetError(Error("Failed to lookup route: " + n));
-          let u = o[n].map((n) => r + "/agency1/next/" + encodeURI(n));
+          let u = o[n].map((n) => r + "https://zaki879.github.io/agency1/next/" + encodeURI(n));
           return {
             scripts: u
               .filter((r) => r.endsWith(".js"))
