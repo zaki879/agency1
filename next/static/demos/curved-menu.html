@@ -73,30 +73,11 @@
       defer=""
       crossorigin=""
     ></script>
-    <style>
-      .btn {
-          background: transparent;
-          border: none;
-          cursor: pointer;
-      }
-      svg {
-          stroke: #000;
-          transition: stroke 0.3s;
-      }
-  </style>
   </head>
   <body>
     <div id="sidebar">
     </div>
-    <div>
-      <button class="btn menu-btn" data-hover  onclick="toggleMenu()" style="height: 50px;width: 50px;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12em" height="12em" viewBox="-5 -7 24 24"><path fill="currentColor" d="M1 0h5a1 1 0 1 1 0 2H1a1 1 0 1 1 0-2m7 8h5a1 1 0 0 1 0 2H8a1 1 0 1 1 0-2M1 4h12a1 1 0 0 1 0 2H1a1 1 0 1 1 0-2"/></svg>
-          <div data-hover-bounds=""></div>
-      </button>
-    </div>
-</main>
 
-<div class="cursor"></div>
 
 
     
@@ -112,10 +93,7 @@
         "scriptLoader": []
       }
     </script>
-    <script
-    type="module"
-    src="stickyscript.js"
-  ></script>
+   
   <script>
     function toggleMenu() {
         var menuIcon = document.getElementById('menuIcon');
