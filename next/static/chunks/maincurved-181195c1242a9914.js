@@ -466,7 +466,7 @@
           (E = u.defaultLocale);
         let n = u.assetPrefix || "";
         if (
-          (self.__next_set_public_path__("" + n + "/next/"),
+          (self.__next_set_public_path__("" + n + "/agency1/next/"),
           (0, N.setConfig)({
             serverRuntimeConfig: {},
             publicRuntimeConfig: u.runtimeConfig || {},
@@ -489,7 +489,7 @@
           (window.__NEXT_P = []),
           (window.__NEXT_P.push = register),
           ((h = (0, k.default)()).getIsSsr = () => l.isSsr),
-          (f = document.getElementById("zaki")),
+          (f = document.getElementById("sidebar")),
           { assetPrefix: n }
         );
       }
@@ -1433,7 +1433,7 @@
         return getClientBuildManifest().then((o) => {
           if (!(n in o))
             throw markAssetError(Error("Failed to lookup route: " + n));
-          let u = o[n].map((n) => r + "/next/" + encodeURI(n));
+          let u = o[n].map((n) => r + "/agency1/next/" + encodeURI(n));
           return {
             scripts: u
               .filter((r) => r.endsWith(".js"))
